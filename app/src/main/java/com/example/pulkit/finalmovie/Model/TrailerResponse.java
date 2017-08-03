@@ -2,6 +2,7 @@ package com.example.pulkit.finalmovie.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ public class TrailerResponse {
 
     @SerializedName("id")
     private int id_trailer;
+
     @SerializedName("results")
     private List<Trailers> results;
 
@@ -26,4 +28,15 @@ public class TrailerResponse {
     public List<Trailers> getResults(){
         return results;
     }
+
+    public void setResults(List<Trailers> results) {
+        this.results = results;
+    }
+    public List<Trailers> getMovies() {
+        return results;
+    }
+    public void setMovies(List<Trailers> results) {
+        this.results = results;
+    }
+
 }

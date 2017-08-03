@@ -57,7 +57,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.VideoI
             @Override
             public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
 
-                youTubeThumbnailLoader.setVideo(VideoID[position]);
+                youTubeThumbnailLoader.setVideo(mTrailers.get(position).getKey());
                 youTubeThumbnailLoader.setOnThumbnailLoadedListener(onThumbnailLoadedListener);
             }
 
@@ -70,7 +70,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.VideoI
 
     @Override
     public int getItemCount() {
-        return mTrailers.size();
+        return (mTrailers == null) ? 0 : mTrailers.size();
     }
 
     public class VideoInfoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -90,7 +90,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.VideoI
         @Override
         public void onClick(View v) {
 
-            Intent intent = YouTubeStandalonePlayer.createVideoIntent((Activity) mContext, ConstantKey.YOUTUBE_API,VideoID[getLayoutPosition()] );
+            Intent intent = YouTubeStandalonePlayer.createVideoIntent((Activity) mContext, ConstantKey.YOUTUBE_API,mTrailers.get(getLayoutPosition()).getKey());
             mContext.startActivity(intent);
         }
     }
