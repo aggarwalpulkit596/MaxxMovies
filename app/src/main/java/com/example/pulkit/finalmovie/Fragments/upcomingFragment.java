@@ -69,6 +69,7 @@ public class upcomingFragment extends Fragment {
                 mMovies = response.body().getResults();
                 mRecyclerView.setAdapter(new MovieAdapter(mMovies, getContext()));
 
+
             }
 
             @Override

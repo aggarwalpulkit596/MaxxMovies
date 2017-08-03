@@ -61,7 +61,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         if (getIntent().hasExtra(EXTRA_MOVIE)) {
-            mMovie = getIntent().getParcelableExtra(EXTRA_MOVIE);
+            mMovie = (Movies) getIntent().getSerializableExtra(EXTRA_MOVIE);
         } else {
             throw new IllegalArgumentException("Detail activity must receive a movie parcelable");
         }
@@ -90,7 +90,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
         movie_id = mMovie.getId();
-        title.setText(titlename);
+        title.setText(titlename+" (" +date.substring(0,4)+")");
         description.setText(mMovie.getDescription());
         Picasso.with(this)
                 .load(mMovie.getPoster())
@@ -98,8 +98,14 @@ public class MovieDetailActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load(mMovie.getBackdrop())
                 .into(backdrop);
-        fetchtrailers();
-        fetchcredits();
+        if(mMovie.getTitle() == null){
+            fetchseriestrailers();
+            fetchseriescredits();
+        }
+        else {
+            fetchtrailers();
+            fetchcredits();
+        }
     }
 
     private void fetchcredits() {
@@ -124,6 +130,28 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
     }
+    private void fetchseriescredits() {
+        cadapter = new CreditAdapter(mCredits, this);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.creditRecyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<CreditResponse> call = apiService.getSeriesCredits(movie_id, ConstantKey.MOVIEDB_API);
+        call.enqueue(new Callback<CreditResponse>() {
+            @Override
+            public void onResponse(Call<CreditResponse> call, Response<CreditResponse> response) {
+                List<Credit> credit = response.body().getResults();
+                mRecyclerView.setAdapter(new CreditAdapter(credit, getApplicationContext()));
+            }
+
+            @Override
+            public void onFailure(Call<CreditResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+
+            }
+        });
+    }
 
     private void fetchtrailers() {
         adapter = new TrailersAdapter(this, mTrailers);
@@ -133,6 +161,28 @@ public class MovieDetailActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<TrailerResponse> call = apiService.getMovieTrailer(movie_id, ConstantKey.MOVIEDB_API);
+        call.enqueue(new Callback<TrailerResponse>() {
+            @Override
+            public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
+                List<Trailers> trailer = response.body().getResults();
+                mRecyclerView.setAdapter(new TrailersAdapter(getApplicationContext(), trailer));
+            }
+
+            @Override
+            public void onFailure(Call<TrailerResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+
+            }
+        });
+    }
+    private void fetchseriestrailers() {
+        adapter = new TrailersAdapter(this, mTrailers);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<TrailerResponse> call = apiService.getSeriesTrailer(movie_id, ConstantKey.MOVIEDB_API);
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {

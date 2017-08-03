@@ -38,6 +38,13 @@ public interface ApiInterface {
     @GET("movie/{movie_id}/videos")
     Call<TrailerResponse> getMovieTrailer(@Path("movie_id") int id, @Query("api_key") String apiKey);
 
+    @GET("tv/{movie_id}/videos")
+    Call<TrailerResponse> getSeriesTrailer(@Path("movie_id") int id, @Query("api_key") String apiKey);
+
     @GET("movie/{id}/credits")
     Call<CreditResponse> getMovieCredits(@Path("id") int id, @Query("api_key") String apikey);
+
+    @GET("tv/{id}/credits")
+    Call<CreditResponse> getSeriesCredits(@Path("id") int id, @Query("api_key") String apikey);
+
 }

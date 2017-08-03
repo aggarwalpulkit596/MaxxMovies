@@ -1,10 +1,9 @@
 package com.example.pulkit.finalmovie.Model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
  * Created by Pulkit on 8/2/2017.
  */
 
-public class Movies implements Parcelable {
+public class Movies implements Serializable {
     @SerializedName("first_air_date")
     private String firstairdate;
     @SerializedName("title")
@@ -56,34 +55,6 @@ public class Movies implements Parcelable {
         this.name = name;
     }
 
-    protected Movies(Parcel in) {
-        this.title = in.readString();
-        this.poster = in.readString();
-        this.description = in.readString();
-        this.backdrop = in.readString();
-        this.releaseDate = in.readString();
-        this.name = in.readString();
-        this.id = (Integer) in.readValue(Integer.class.getClassLoader());                this.popularity = (Double) in.readValue(Double.class.getClassLoader());
-        this.voteCount = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.firstairdate = in.readString();
-        this.adult = in.readByte() != 0;
-        this.genreIds = new ArrayList<>();
-        in.readList(this.genreIds,Integer.class.getClassLoader());
-        this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
-
-    }
-
-    public static final Creator<Movies> CREATOR = new Creator<Movies>() {
-        @Override
-        public Movies createFromParcel(Parcel in) {
-            return new Movies(in);
-        }
-
-        @Override
-        public Movies[] newArray(int size) {
-            return new Movies[size];
-        }
-    };
 
 
     public String getFirstairdate() {
@@ -189,28 +160,5 @@ public class Movies implements Parcelable {
     public void setVoteAverage(Double voteAverage) {
         this.voteAverage = voteAverage;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(title);
-        parcel.writeString(poster);
-        parcel.writeString(description);
-        parcel.writeString(backdrop);
-        parcel.writeDouble(voteAverage);
-        parcel.writeString(name);
-        parcel.writeList(genreIds);
-        parcel.writeInt(id);
-        parcel.writeString(releaseDate);
-        parcel.writeDouble(popularity);
-        parcel.writeInt(voteCount);
-        parcel.writeDouble(voteAverage);
-        parcel.writeString(firstairdate);
-        parcel.writeByte(this.adult ? (byte) 1 : (byte) 0);
-
-    }
+    
 }
