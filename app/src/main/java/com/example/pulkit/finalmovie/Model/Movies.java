@@ -57,19 +57,19 @@ public class Movies implements Parcelable {
     }
 
     protected Movies(Parcel in) {
-        title = in.readString();
-        poster = in.readString();
-        description = in.readString();
-        backdrop = in.readString();
-        releaseDate = in.readString();
-        name = in.readString();
-        id = in.readInt();
-        voteAverage = in.readDouble();
-        popularity = in.readDouble();
-        voteCount = in.readInt();
-        firstairdate = in.readString();
-//        List<Integer>genres = new ArrayList<>();
-//        genreIds=in.readList(genres,null);
+        this.title = in.readString();
+        this.poster = in.readString();
+        this.description = in.readString();
+        this.backdrop = in.readString();
+        this.releaseDate = in.readString();
+        this.name = in.readString();
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());                this.popularity = (Double) in.readValue(Double.class.getClassLoader());
+        this.voteCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.firstairdate = in.readString();
+        this.adult = in.readByte() != 0;
+        this.genreIds = new ArrayList<>();
+        in.readList(this.genreIds,Integer.class.getClassLoader());
+        this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
 
     }
 
@@ -210,6 +210,7 @@ public class Movies implements Parcelable {
         parcel.writeInt(voteCount);
         parcel.writeDouble(voteAverage);
         parcel.writeString(firstairdate);
+        parcel.writeByte(this.adult ? (byte) 1 : (byte) 0);
 
     }
 }

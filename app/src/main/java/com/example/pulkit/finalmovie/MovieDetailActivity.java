@@ -99,7 +99,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .load(mMovie.getBackdrop())
                 .into(backdrop);
 //        fetchtrailers();
-        fetchcredits();
+//        fetchcredits();
     }
 
     private void fetchcredits() {
