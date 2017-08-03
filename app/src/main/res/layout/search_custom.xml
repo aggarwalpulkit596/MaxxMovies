@@ -1,0 +1,12 @@
+<AutoCompleteTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/autoCompleteTextView_searchWidget"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:textColor="@color/colorBlack"
+    android:imeOptions="actionSearch"
+    android:inputType="text"
+    android:minWidth="500dp">
+    <requestFocus/>
+</AutoCompleteTextView>

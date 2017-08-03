@@ -10,7 +10,9 @@
     <color name="colorGrey">#70707070</color>
     <color name="colorGreyLight">#8A8A8A8A</color>
     <color name="colorYellow">#FFF000</color>
-
+    <color name="odd">#eee</color>
+    <color name="even">#fff</color>
+    <color name="devider">#ccc</color>
 
 
 </resources>

@@ -40,7 +40,6 @@ public class Movies implements Parcelable {
     @SerializedName("name")
     private String name;
 
-
     public Movies(String firstairdate, String title, String poster, String description, String backdrop, Boolean adult, Integer id, String releaseDate, List<Integer> genreIds, Double popularity, Integer voteCount, Double voteAverage, String name) {
         this.firstairdate = firstairdate;
         this.title = title;
@@ -64,11 +63,11 @@ public class Movies implements Parcelable {
         backdrop = in.readString();
         releaseDate = in.readString();
         name = in.readString();
-        id=in.readInt();
-        voteAverage=in.readDouble();
-        popularity=in.readDouble();
-        voteCount=in.readInt();
-        firstairdate=in.readString();
+        id = in.readInt();
+        voteAverage = in.readDouble();
+        popularity = in.readDouble();
+        voteCount = in.readInt();
+        firstairdate = in.readString();
 //        List<Integer>genres = new ArrayList<>();
 //        genreIds=in.readList(genres,null);
 
@@ -85,6 +84,23 @@ public class Movies implements Parcelable {
             return new Movies[size];
         }
     };
+
+
+    public String getFirstairdate() {
+        return firstairdate;
+    }
+
+    public void setFirstairdate(String firstairdate) {
+        this.firstairdate = firstairdate;
+    }
+
+    public String getName() {
+        return (name == null) ? title : name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getTitle() {
         return (title == null) ? name : title;//return name in case of tv and title in case of movies

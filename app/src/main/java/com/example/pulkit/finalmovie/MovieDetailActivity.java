@@ -45,7 +45,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     MaterialFavoriteButton materialFavoriteButton;
     private List<Trailers> mTrailers;
     int movie_id;
-
+    String titlename;
+    String date;
 
 
     @Override
@@ -69,7 +70,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
-        toolbarLayout.setTitle(mMovie.getTitle());
+        titlename = (mMovie.getTitle() == null) ? mMovie.getName() : mMovie.getTitle();
+        date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
+
+        toolbarLayout.setTitle(titlename);
+        Log.i("TitleorName",titlename+" and" + date);
         backdrop = (ImageView) findViewById(R.id.backdrop);
         title = (TextView) findViewById(R.id.movie_title);
         description = (TextView) findViewById(R.id.movie_description);
@@ -77,8 +82,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         materialFavoriteButton = (MaterialFavoriteButton) findViewById(R.id.favourite_button);
 
 
-        movie_id=mMovie.getId();
-        title.setText(mMovie.getTitle());
+        movie_id = mMovie.getId();
+        title.setText(titlename);
         description.setText(mMovie.getDescription());
         Picasso.with(this)
                 .load(mMovie.getPoster())
@@ -86,22 +91,19 @@ public class MovieDetailActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load(mMovie.getBackdrop())
                 .into(backdrop);
-        fetchtrailers();
+//        fetchtrailers();
     }
 
     private void fetchtrailers() {
         mTrailers = new ArrayList<>();
-        adapter=new TrailersAdapter(this, mTrailers);
+        adapter = new TrailersAdapter(this, mTrailers);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<TrailerResponse> call = apiService.getMovieTrailer(movie_id,ConstantKey.MOVIEDB_API);
+        Call<TrailerResponse> call = apiService.getMovieTrailer(movie_id, ConstantKey.MOVIEDB_API);
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
@@ -116,5 +118,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             }
         });
+        adapter.notifyDataSetChanged();
     }
 }
