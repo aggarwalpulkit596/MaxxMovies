@@ -44,7 +44,7 @@ public interface ApiInterface {
     @GET("movie/{id}/credits")
     Call<CreditResponse> getMovieCredits(@Path("id") int id, @Query("api_key") String apikey);
 
-    @GET("tv/{id}/credits")
-    Call<CreditResponse> getSeriesCredits(@Path("id") int id, @Query("api_key") String apikey);
+    @GET("tv/{tv_id}/credits")
+    Call<CreditResponse> getSeriesCredits(@Path("tv_id") int id, @Query("api_key") String apikey);
 
 }

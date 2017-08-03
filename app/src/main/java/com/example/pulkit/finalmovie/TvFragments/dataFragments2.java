@@ -11,10 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.pulkit.finalmovie.Fragments.PopularFragment;
-import com.example.pulkit.finalmovie.Fragments.contentFragment;
-import com.example.pulkit.finalmovie.Fragments.dataFragment;
-import com.example.pulkit.finalmovie.Fragments.topRatedFragment;
 import com.example.pulkit.finalmovie.R;
 
 /**
@@ -55,15 +51,14 @@ public class dataFragments2 extends Fragment{
                 case 0: return new TvPopularFragment();
                 case 1: return new TvTopRatedFragment();
                 case 2: return new onTheAirFragment();
-                case 3: return new contentFragment();
             }
 
-            return new contentFragment();
+            return new TvPopularFragment();
         }
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
         @Override
         public CharSequence getPageTitle(int position) {

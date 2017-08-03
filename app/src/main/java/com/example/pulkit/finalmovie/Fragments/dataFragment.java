@@ -52,15 +52,14 @@ public class dataFragment extends Fragment{
                 case 1: return new topRatedFragment();
                 case 2: return new upcomingFragment();
                 case 3: return new nowPlayingFragment();
-                case 4: return new contentFragment();
             }
 
-            return new contentFragment();
+            return new PopularFragment();
         }
 
         @Override
         public int getCount() {
-            return 5;
+            return 4;
         }
         @Override
         public CharSequence getPageTitle(int position) {
