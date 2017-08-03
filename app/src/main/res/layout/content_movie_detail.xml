@@ -13,8 +13,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/trailerRecyclerView" />
         <TextView
             android:id="@+id/movie_title"
@@ -33,6 +33,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"/>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/creditRecyclerView" />
 
         <com.github.ivbaranov.mfb.MaterialFavoriteButton
             android:layout_height="100dp"

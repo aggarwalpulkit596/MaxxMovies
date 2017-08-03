@@ -13,6 +13,7 @@ import com.example.pulkit.finalmovie.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Pulkit on 8/3/2017.
@@ -20,10 +21,10 @@ import java.util.ArrayList;
 
 public class CreditAdapter extends RecyclerView.Adapter<CreditAdapter.CreditViewHolder> {
 
-    private ArrayList<Credit> mCredit;
+    private List<Credit> mCredit;
     private Context mContext;
 
-    public CreditAdapter(ArrayList<Credit> mCredit, Context mContext) {
+    public CreditAdapter(List<Credit> mCredit, Context mContext) {
         this.mCredit = mCredit;
         this.mContext = mContext;
     }

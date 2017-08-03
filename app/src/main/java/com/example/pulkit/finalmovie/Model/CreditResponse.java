@@ -22,8 +22,20 @@ public class CreditResponse {
         this.id_credit = id_credit;
     }
 
-    public List<Credit> getResults(){
+    public List<Credit> getResults() {
         return results;
+    }
+
+    public void setResults(List<Credit> results) {
+        this.results = results;
+    }
+
+    public List<Credit> getCredit() {
+        return results;
+    }
+
+    public void setCredit(List<Credit> results) {
+        this.results = results;
     }
 }
 

@@ -17,25 +17,27 @@ public class TrailerResponse {
     @SerializedName("results")
     private List<Trailers> results;
 
-    public int getIdTrailer(){
+    public int getIdTrailer() {
         return id_trailer;
     }
 
-    public void seIdTrailer(int id_trailer){
+    public void seIdTrailer(int id_trailer) {
         this.id_trailer = id_trailer;
     }
 
-    public List<Trailers> getResults(){
+    public List<Trailers> getResults() {
         return results;
     }
 
     public void setResults(List<Trailers> results) {
         this.results = results;
     }
-    public List<Trailers> getMovies() {
+
+    public List<Trailers> getTrailer() {
         return results;
     }
-    public void setMovies(List<Trailers> results) {
+
+    public void setTrailer(List<Trailers> results) {
         this.results = results;
     }
 

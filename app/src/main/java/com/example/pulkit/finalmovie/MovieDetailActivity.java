@@ -16,7 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pulkit.finalmovie.Adapters.CreditAdapter;
 import com.example.pulkit.finalmovie.Adapters.TrailersAdapter;
+import com.example.pulkit.finalmovie.Model.Credit;
+import com.example.pulkit.finalmovie.Model.CreditResponse;
 import com.example.pulkit.finalmovie.Model.Movies;
 import com.example.pulkit.finalmovie.Model.TrailerResponse;
 import com.example.pulkit.finalmovie.Model.Trailers;
@@ -40,9 +43,13 @@ public class MovieDetailActivity extends AppCompatActivity {
     ImageView poster;
     TextView title;
     TextView description;
-    RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView, nRecyclerView;
     TrailersAdapter adapter;
+    CreditAdapter cadapter;
     List<Trailers> mTrailers;
+    List<Credit> mCredits;
+
+
     MaterialFavoriteButton materialFavoriteButton;
     int movie_id;
     String titlename;
@@ -74,7 +81,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
 
         toolbarLayout.setTitle(titlename);
-        Log.i("TitleorName",titlename+" and" + date);
+        Log.i("TitleorName", titlename + " and" + date);
         backdrop = (ImageView) findViewById(R.id.backdrop);
         title = (TextView) findViewById(R.id.movie_title);
         description = (TextView) findViewById(R.id.movie_description);
@@ -92,6 +99,30 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .load(mMovie.getBackdrop())
                 .into(backdrop);
 //        fetchtrailers();
+        fetchcredits();
+    }
+
+    private void fetchcredits() {
+        cadapter = new CreditAdapter(mCredits, this);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.creditRecyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<CreditResponse> call = apiService.getMovieCredits(movie_id, ConstantKey.MOVIEDB_API);
+        call.enqueue(new Callback<CreditResponse>() {
+            @Override
+            public void onResponse(Call<CreditResponse> call, Response<CreditResponse> response) {
+                List<Credit> credit = response.body().getResults();
+                mRecyclerView.setAdapter(new CreditAdapter(credit, getApplicationContext()));
+            }
+
+            @Override
+            public void onFailure(Call<CreditResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+
+            }
+        });
     }
 
     private void fetchtrailers() {
