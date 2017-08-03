@@ -11,7 +11,7 @@ import java.util.List;
 public class CreditResponse {
     @SerializedName("id")
     private int id_credit;
-    @SerializedName("results")
+    @SerializedName("cast")
     private List<Credit> results;
 
     public int getId_credit() {

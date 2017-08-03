@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import com.example.pulkit.finalmovie.ConstantKey;
+import com.example.pulkit.finalmovie.MovieDetailActivity;
 import com.example.pulkit.finalmovie.R;
 import com.example.pulkit.finalmovie.Model.Trailers;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -26,10 +27,16 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.VideoI
     private Context mContext;
     private List<Trailers> mTrailers;
     String[] VideoID = {"ePbKGoIGAXY", "2LqzF5WauAw", "nyc6RJEEe0U"};
+    YoutubePlayClickListerner mListener;
 
-    public TrailersAdapter(Context context, List<Trailers> mTrailers) {
+    public TrailersAdapter(Context context, List<Trailers> mTrailers, YoutubePlayClickListerner listerner) {
         this.mContext = context;
         this.mTrailers = mTrailers;
+        mListener = listerner;
+    }
+
+    public interface YoutubePlayClickListerner{
+        void onPlayClick(String key);
     }
 
     @Override
@@ -89,9 +96,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.VideoI
 
         @Override
         public void onClick(View v) {
+            mListener.onPlayClick(mTrailers.get(getLayoutPosition()).getKey());
 
-            Intent intent = YouTubeStandalonePlayer.createVideoIntent((Activity) mContext, ConstantKey.YOUTUBE_API,mTrailers.get(getLayoutPosition()).getKey());
-            mContext.startActivity(intent);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.pulkit.finalmovie;
 
 import android.app.Service;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +27,7 @@ import com.example.pulkit.finalmovie.Model.Trailers;
 import com.example.pulkit.finalmovie.Rest.ApiClients;
 import com.example.pulkit.finalmovie.Rest.ApiInterface;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -90,7 +92,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
         movie_id = mMovie.getId();
-        title.setText(titlename+" (" +date.substring(0,4)+")");
+        title.setText(titlename);
         description.setText(mMovie.getDescription());
         Picasso.with(this)
                 .load(mMovie.getPoster())
@@ -98,14 +100,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load(mMovie.getBackdrop())
                 .into(backdrop);
-        if(mMovie.getTitle() == null){
-            fetchseriestrailers();
-            fetchseriescredits();
-        }
-        else {
-            fetchtrailers();
-            fetchcredits();
-        }
+        fetchtrailers();
+        fetchcredits();
     }
 
     private void fetchcredits() {
@@ -119,75 +115,41 @@ public class MovieDetailActivity extends AppCompatActivity {
         call.enqueue(new Callback<CreditResponse>() {
             @Override
             public void onResponse(Call<CreditResponse> call, Response<CreditResponse> response) {
-                List<Credit> credit = response.body().getResults();
-                mRecyclerView.setAdapter(new CreditAdapter(credit, getApplicationContext()));
+                Log.d("response code", response.code()+"");
+                if(response.isSuccessful()) {
+                    List<Credit> credit = response.body().getResults();
+                    mRecyclerView.setAdapter(new CreditAdapter(credit, MovieDetailActivity.this));
+                    mRecyclerView.scrollToPosition(0);
+                }
             }
 
             @Override
             public void onFailure(Call<CreditResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
 
-            }
-        });
-    }
-    private void fetchseriescredits() {
-        cadapter = new CreditAdapter(mCredits, this);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.creditRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<CreditResponse> call = apiService.getSeriesCredits(movie_id, ConstantKey.MOVIEDB_API);
-        call.enqueue(new Callback<CreditResponse>() {
-            @Override
-            public void onResponse(Call<CreditResponse> call, Response<CreditResponse> response) {
-                List<Credit> credit = response.body().getResults();
-                mRecyclerView.setAdapter(new CreditAdapter(credit, getApplicationContext()));
-            }
-
-            @Override
-            public void onFailure(Call<CreditResponse> call, Throwable t) {
-                Log.d("Error", t.getMessage());
 
             }
         });
     }
 
     private void fetchtrailers() {
-        adapter = new TrailersAdapter(this, mTrailers);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        nRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
+        nRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        nRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<TrailerResponse> call = apiService.getMovieTrailer(movie_id, ConstantKey.MOVIEDB_API);
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
                 List<Trailers> trailer = response.body().getResults();
-                mRecyclerView.setAdapter(new TrailersAdapter(getApplicationContext(), trailer));
-            }
-
-            @Override
-            public void onFailure(Call<TrailerResponse> call, Throwable t) {
-                Log.d("Error", t.getMessage());
-
-            }
-        });
-    }
-    private void fetchseriestrailers() {
-        adapter = new TrailersAdapter(this, mTrailers);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<TrailerResponse> call = apiService.getSeriesTrailer(movie_id, ConstantKey.MOVIEDB_API);
-        call.enqueue(new Callback<TrailerResponse>() {
-            @Override
-            public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
-                List<Trailers> trailer = response.body().getResults();
-                mRecyclerView.setAdapter(new TrailersAdapter(getApplicationContext(), trailer));
+                nRecyclerView.setAdapter(new TrailersAdapter(MovieDetailActivity.this, trailer, new TrailersAdapter.YoutubePlayClickListerner() {
+                    @Override
+                    public void onPlayClick(String key) {
+                        Intent intent = YouTubeStandalonePlayer.createVideoIntent( MovieDetailActivity.this, ConstantKey.YOUTUBE_API,key);
+                        startActivity(intent);
+                    }
+                }));
+                nRecyclerView.scrollToPosition(0);
             }
 
             @Override
