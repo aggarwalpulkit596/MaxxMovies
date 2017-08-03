@@ -8,8 +8,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -85,17 +88,17 @@ public class MovieDetailActivity extends AppCompatActivity {
         titlename = (mMovie.getTitle() == null) ? mMovie.getName() : mMovie.getTitle();
         date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
 
-        toolbarLayout.setTitle(titlename);
+        toolbarLayout.setTitle(titlename+" ("+date.substring(0,4)+")");
         Log.i("TitleorName", titlename + " and" + date);
         backdrop = (ImageView) findViewById(R.id.backdrop);
         title = (TextView) findViewById(R.id.movie_title);
         description = (TextView) findViewById(R.id.movie_description);
         poster = (ImageView) findViewById(R.id.movie_poster);
-        materialFavoriteButton = (MaterialFavoriteButton) findViewById(R.id.favourite_button);
+//        materialFavoriteButton = (MaterialFavoriteButton) findViewById(R.id.favourite_button);
 
 
         movie_id = mMovie.getId();
-        title.setText(titlename+date.substring(0,4));
+        title.setText(titlename);
         description.setText(mMovie.getDescription());
         Picasso.with(this)
                 .load(mMovie.getPoster())
@@ -110,8 +113,9 @@ public class MovieDetailActivity extends AppCompatActivity {
     private void fetchcredits() {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.creditRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(mRecyclerView);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,3, GridLayoutManager.VERTICAL, false));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<CreditResponse> call;
         if(istv==true) {
@@ -141,8 +145,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private void fetchtrailers() {
         nRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
-        nRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
-        nRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(nRecyclerView);
+        nRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        nRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL) );
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<TrailerResponse> call;
         if(istv==true) {

@@ -51,7 +51,7 @@ public class CreditAdapter extends RecyclerView.Adapter<CreditAdapter.CreditView
 
     @Override
     public int getItemCount() {
-        return (mCredit == null) ? 0 : 4;
+        return (mCredit == null) ? 0 : 3;
     }
 
     public static class CreditViewHolder extends RecyclerView.ViewHolder {

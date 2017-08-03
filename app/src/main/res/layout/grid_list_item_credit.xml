@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/credit_layout"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:padding="16dp"
-    android:minHeight="200dp">
+    android:minHeight="200dp"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
     <ImageView
+        android:id="@+id/characterimage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/characterimage"
-        android:scaleType="centerCrop"/>
+        android:layout_weight="1.81"
+        android:scaleType="centerCrop" />
+
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
-        android:layout_marginLeft="8dp"
-        android:text="5.0" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"/>
+
     <TextView
         android:id="@+id/character"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
-        android:layout_marginLeft="8dp"
-        android:text="5.0" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"/>
 </LinearLayout>

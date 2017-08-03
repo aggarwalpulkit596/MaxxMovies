@@ -12,37 +12,67 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="wrap_content"
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/trailerRecyclerView" />
+            app:cardBackgroundColor="@color/colorGreyLight">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/trailerRecyclerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </android.support.v7.widget.CardView>
+
         <TextView
             android:id="@+id/movie_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/activity_vertical_margin"
-            android:textAppearance="?android:textAppearanceLarge"
-            />
+            android:textAppearance="?android:textAppearanceLarge" />
+
         <TextView
             android:id="@+id/movie_description"
             android:layout_width="match_parent"
-            android:padding="@dimen/activity_vertical_margin"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_vertical_margin" />
+
         <ImageView
             android:id="@+id/movie_poster"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"/>
-        <android.support.v7.widget.RecyclerView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/creditRecyclerView" />
+            android:adjustViewBounds="true" />
 
-        <com.github.ivbaranov.mfb.MaterialFavoriteButton
-            android:layout_height="100dp"
-            android:layout_width="100dp"
-            android:id="@+id/favourite_button"
-            android:background="@color/colorPrimary"/>
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="20dp"
+            app:cardBackgroundColor="@color/colorBlack"
+            app:contentPaddingBottom="2dp"
+            app:contentPaddingLeft="2dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/topbilledcast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Top Billed Cast"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="30dp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/creditRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_below="@+id/topbilledcast" />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <!--<com.github.ivbaranov.mfb.MaterialFavoriteButton--><!--android:id="@+id/favourite_button"--><!--android:layout_width="100dp"--><!--android:layout_height="100dp"--><!--android:background="@color/colorPrimary" />-->
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>
