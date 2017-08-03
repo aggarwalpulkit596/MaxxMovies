@@ -42,8 +42,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     TextView description;
     RecyclerView mRecyclerView;
     TrailersAdapter adapter;
+    List<Trailers> mTrailers;
     MaterialFavoriteButton materialFavoriteButton;
-    private List<Trailers> mTrailers;
     int movie_id;
     String titlename;
     String date;
@@ -95,13 +95,11 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void fetchtrailers() {
-        mTrailers = new ArrayList<>();
         adapter = new TrailersAdapter(this, mTrailers);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mRecyclerView.setAdapter(adapter);
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<TrailerResponse> call = apiService.getMovieTrailer(movie_id, ConstantKey.MOVIEDB_API);
         call.enqueue(new Callback<TrailerResponse>() {
@@ -109,7 +107,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
                 List<Trailers> trailer = response.body().getResults();
                 mRecyclerView.setAdapter(new TrailersAdapter(getApplicationContext(), trailer));
-                mRecyclerView.smoothScrollToPosition(0);
             }
 
             @Override
@@ -118,6 +115,5 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             }
         });
-        adapter.notifyDataSetChanged();
     }
 }
