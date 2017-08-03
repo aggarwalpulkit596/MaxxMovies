@@ -98,8 +98,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load(mMovie.getBackdrop())
                 .into(backdrop);
-//        fetchtrailers();
-//        fetchcredits();
+        fetchtrailers();
+        fetchcredits();
     }
 
     private void fetchcredits() {
