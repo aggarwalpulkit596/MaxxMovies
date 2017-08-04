@@ -1,15 +1,18 @@
 package com.example.pulkit.finalmovie;
 
-import android.app.Service;
+
+
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Movie;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -35,15 +38,15 @@ import com.example.pulkit.finalmovie.Rest.ApiClients;
 import com.example.pulkit.finalmovie.Rest.ApiInterface;
 import com.example.pulkit.finalmovie.TvFragments.RecyclerItemClickListener;
 import com.github.clans.fab.FloatingActionMenu;
-import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,18 +56,12 @@ import retrofit2.Response;
 public class MovieDetailActivity extends AppCompatActivity {
     public static final String EXTRA_MOVIE = "movie";
     private Movies mMovie;
-    ImageView backdrop;
-    ImageView poster;
-    TextView title;
-    TextView description;
-    TextView genrelist;
-    TextView rating;
-    TextView releasedate;
+    ImageView backdrop, poster;
+    TextView title, description, genrelist, rating, releasedate;
     RecyclerView mRecyclerView, nRecyclerView, pRecyclerview;
     List<Trailers> trailer;
     List<Credit> credit;
     ArrayList<Movies> movie;
-    private Movies favorite;
     int movie_id;
     String titlename;
     String date;
@@ -109,29 +106,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             throw new IllegalArgumentException("Detail activity must receive a movie parcelable");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        menuRed = (FloatingActionMenu) findViewById(R.id.fab);
-        fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
-        menuRed.setClosedOnTouchOutside(true);
-        menus.add(menuRed);
-        menuRed.setOnMenuButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (menuRed.isOpened()) {
-                    Toast.makeText(MovieDetailActivity.this, menuRed.getMenuButtonLabelText(), Toast.LENGTH_SHORT).show();
-                }
-
-                menuRed.toggle(true);
-            }
-        });
-        fab2.setOnClickListener(clickListener);
-        genreIds.addAll(mMovie.getGenreIds());
-        titlename = (mMovie.getTitle() == null) ? mMovie.getName() : mMovie.getTitle();
-        date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
-
-        toolbarLayout.setTitle(titlename + " (" + date.substring(0, 4) + ")");
-        Log.i("TitleorName", titlename + " and" + date);
         backdrop = (ImageView) findViewById(R.id.backdrop);
         title = (TextView) findViewById(R.id.movie_title);
         description = (TextView) findViewById(R.id.movie_description);
@@ -139,6 +113,25 @@ public class MovieDetailActivity extends AppCompatActivity {
         poster = (ImageView) findViewById(R.id.movie_poster);
         genrelist = (TextView) findViewById(R.id.movie_genre);
         releasedate = (TextView) findViewById(R.id.moviesreleasedate);
+        menuRed = (FloatingActionMenu) findViewById(R.id.fab);
+        fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
+        com.github.clans.fab.FloatingActionButton fab1 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab1);
+        setSupportActionBar(toolbar);
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        menuRed.setClosedOnTouchOutside(true);
+        menus.add(menuRed);
+        menuRed.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menuRed.toggle(true);
+            }
+        });
+        fab1.setOnClickListener(clickListener);
+        fab2.setOnClickListener(clickListener);
+        genreIds.addAll(mMovie.getGenreIds());
+        titlename = (mMovie.getTitle() == null) ? mMovie.getName() : mMovie.getTitle();
+        date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
+        toolbarLayout.setTitle(titlename + " (" + date.substring(0, 4) + ")");
         for (Integer m : genreIds) {
             hmap.get(m);
             total += hmap.get(m) + " | ";
@@ -157,7 +150,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .into(backdrop);
         fetchtrailers();
         fetchcredits();
-//        if(istv=)
         fetchreccomendations();
     }
 
@@ -168,15 +160,15 @@ public class MovieDetailActivity extends AppCompatActivity {
         pRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<MovieResponse> call;
-        if (istv == true)
+        if (istv)
             call = apiService.getSeriesRecommendations(movie_id, ConstantKey.MOVIEDB_API);
+
         else
             call = apiService.getMovieRecommendations(movie_id, ConstantKey.MOVIEDB_API);
-
         call.enqueue(new Callback<MovieResponse>() {
 
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+            public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                 int statusCode = response.code();
                 movie = response.body().getResults();
                 pRecyclerview.setAdapter(new MovieAdapter(movie, MovieDetailActivity.this));
@@ -184,7 +176,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
 
             }
         });
@@ -192,9 +184,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                 new RecyclerItemClickListener(MovieDetailActivity.this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(MovieDetailActivity.this,MovieDetailActivity.class);
+                        Intent intent = new Intent(MovieDetailActivity.this, MovieDetailActivity.class);
                         intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, movie.get(position));
-                        intent.putExtra("istv",true);
+                        if (istv)
+                            intent.putExtra("istv", true);
+
                         startActivity(intent);
                     }
 
@@ -214,11 +208,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<CreditResponse> call;
-        if (istv == true) {
+        if (istv)
             call = apiService.getSeriesCredits(movie_id, ConstantKey.MOVIEDB_API);
-        } else {
+        else
             call = apiService.getMovieCredits(movie_id, ConstantKey.MOVIEDB_API);
-        }
         call.enqueue(new Callback<CreditResponse>() {
             @Override
             public void onResponse(Call<CreditResponse> call, Response<CreditResponse> response) {
@@ -230,7 +223,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<CreditResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<CreditResponse> call, @NonNull Throwable t) {
                 Log.d("Error", t.getMessage());
 
 
@@ -246,14 +239,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         nRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<TrailerResponse> call;
-        if (istv == true) {
+        if (istv)
             call = apiService.getSeriesTrailer(movie_id, ConstantKey.MOVIEDB_API);
-        } else {
+        else
             call = apiService.getMovieTrailer(movie_id, ConstantKey.MOVIEDB_API);
-        }
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
-            public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
+            public void onResponse(@NonNull Call<TrailerResponse> call, @NonNull Response<TrailerResponse> response) {
                 trailer = response.body().getResults();
                 nRecyclerView.setAdapter(new TrailersAdapter(MovieDetailActivity.this, trailer, new TrailersAdapter.YoutubePlayClickListerner() {
                     @Override
@@ -267,7 +259,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<TrailerResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<TrailerResponse> call, @NonNull Throwable t) {
                 Log.d("Error", t.getMessage());
 
             }
@@ -275,7 +267,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void saveFavorite() {
-        favorite = new Movies();
+        Movies favorite = new Movies();
         favorite.setId(movie_id);
         favorite.setTitle(titlename);
         favorite.setPoster(mMovie.getPoster());
@@ -297,13 +289,60 @@ public class MovieDetailActivity extends AppCompatActivity {
                     } else {
                         fab2.setLabelText("Add to Favorites");
 //                        favoriteOpenHelper.deleteFavorite();
-
                     }
-
                     break;
-
+                case R.id.fab1:
+                    menuRed.close(true);
+                    Toast.makeText(MovieDetailActivity.this, "Screenshot Saved", Toast.LENGTH_SHORT).show();
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap bitmap = takeScreenshot();
+                            saveBitmap(bitmap);
+                        }
+                    };
+                    Handler h = new Handler();
+                    h.postDelayed(r, 500);
+                    break;
             }
         }
     };
+
+    public Bitmap takeScreenshot() {
+        View rootView = findViewById(android.R.id.content).getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        return rootView.getDrawingCache();
+    }
+
+    public void saveBitmap(Bitmap bitmap) {
+        File imagePath = new File(Environment.getExternalStorageDirectory() + "/screenshot.png");
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(imagePath);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            Log.e("GREC", e.getMessage(), e);
+        }
+        shareImage(imagePath);
+    }
+
+    private void shareImage(File file) {
+        Uri uri = Uri.fromFile(file);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("image/*");
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        try {
+            startActivity(Intent.createChooser(intent, "Share Screenshot"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(MovieDetailActivity.this, "No App Available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }

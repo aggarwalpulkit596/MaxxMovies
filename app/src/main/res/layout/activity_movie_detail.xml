@@ -49,6 +49,13 @@
         android:layout_margin="@dimen/fab_margin"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true">
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_star"
+            fab:fab_label="Share Screenshot"
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab2"
