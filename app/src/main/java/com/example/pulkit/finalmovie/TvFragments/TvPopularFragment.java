@@ -59,7 +59,7 @@ public class TvPopularFragment extends Fragment {
                 })
         );
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<MovieResponse> call = apiService.getPopularSeries(ConstantKey.MOVIEDB_API);
+        Call<MovieResponse> call = apiService.getPopularSeries(ConstantKey.MOVIEDB_API,1);
         call.enqueue(new Callback<MovieResponse>() {
 
             @Override

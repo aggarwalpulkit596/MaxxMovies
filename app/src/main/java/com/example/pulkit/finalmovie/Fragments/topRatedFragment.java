@@ -61,7 +61,7 @@ public class topRatedFragment extends Fragment {
                 })
         );
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<MovieResponse> call = apiService.getPopularovies(ConstantKey.MOVIEDB_API);
+        Call<MovieResponse> call = apiService.getPopularovies(ConstantKey.MOVIEDB_API,1);
         call.enqueue(new Callback<MovieResponse>(){
 
             @Override
