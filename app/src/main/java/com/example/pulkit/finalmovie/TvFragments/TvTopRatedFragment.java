@@ -74,7 +74,7 @@ public class TvTopRatedFragment extends Fragment {
                     public void onItemClick(View view, int position) {
                         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
                         intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, mMovies.get(position));
-                        intent.putExtra("istv", false);
+                        intent.putExtra("istv", true);
                         startActivity(intent);
                     }
 
