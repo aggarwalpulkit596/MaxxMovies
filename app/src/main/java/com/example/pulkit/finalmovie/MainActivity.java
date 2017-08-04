@@ -36,7 +36,9 @@ import com.example.pulkit.finalmovie.Rest.ApiInterface;
 import com.example.pulkit.finalmovie.TvFragments.dataFragments2;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -44,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
     AutoCompleteTextView autoCompleteTextView;
     SearchAdapter mAdapter;
     private ArrayList<Movies> mMovieList;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-       setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         mMovieList = new ArrayList<>();
         searchAdapter = new SearchAdapter(MainActivity.this, mMovieList);
 
@@ -66,7 +68,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    Log.i("TAG", "afterTextChanged: "+editable.toString());
+                    Log.i("TAG", "afterTextChanged: " + editable.toString());
                     fetchsearch(editable.toString());
 
                 }
@@ -140,15 +141,15 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_Favorite) {
             setFragment(new dataFragments3());
-        }else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
             drawer.closeDrawer(GravityCompat.START);
-            final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+            Toast.makeText(MainActivity.this, "Screenshot Saved", Toast.LENGTH_SHORT).show();
             Runnable r = new Runnable() {
                 @Override
-                public void run(){
-                    Bitmap bm = getScreenShot(rootView);
-                    File a = store(bm,"ScreenShot"+System.currentTimeMillis());
-                    shareImage(a);                }
+                public void run() {
+                    Bitmap bitmap = takeScreenshot();
+                    saveBitmap(bitmap);
+                }
             };
             Handler h = new Handler();
             h.postDelayed(r, 1000);
@@ -158,15 +159,17 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    public void setFragment(Fragment fragment){
-        if(fragment!=null){
-            FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_main,fragment);
+
+    public void setFragment(Fragment fragment) {
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_main, fragment);
             ft.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
     public void fetchsearch(String s) {
 
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
@@ -175,12 +178,12 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                Log.d("TAG", response.code()+"");
+                Log.d("TAG", response.code() + "");
                 if (response.isSuccessful()) {
                     Log.i("TAG", "onResponse: Success");
                     mMovieList.clear();
                     mMovieList.addAll(response.body().getResults());
-                    Log.i("TAG", "onResponse: With Size "+mMovieList.size()+" "+mMovieList.get(0).getTitle());
+                    Log.i("TAG", "onResponse: With Size " + mMovieList.size() + " " + mMovieList.get(0).getTitle());
                     searchAdapter = new SearchAdapter(MainActivity.this, mMovieList);
                     autoCompleteTextView.setAdapter(searchAdapter);
 //                    toolbar.setCustomView()
@@ -193,31 +196,30 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-    public static Bitmap getScreenShot(View view){
-        View screenView = view.getRootView();
-        screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
-        screenView.setDrawingCacheEnabled(false);
-        return bitmap;
+
+    public Bitmap takeScreenshot() {
+        View rootView = findViewById(android.R.id.content).getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        return rootView.getDrawingCache();
     }
 
-    public static File store(Bitmap bm, String fileName){
-        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
-        File dir = new File(dirPath);
-        if(!dir.exists())
-            dir.mkdirs();
-        File file = new File(dirPath, fileName);
+    public void saveBitmap(Bitmap bitmap) {
+        File imagePath = new File(Environment.getExternalStorageDirectory() + "/screenshot.png");
+        FileOutputStream fos;
         try {
-            FileOutputStream fOut = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-            fOut.flush();
-            fOut.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            fos = new FileOutputStream(imagePath);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.e("GREC", e.getMessage(), e);
+        } catch (IOException e) {
+            Log.e("GREC", e.getMessage(), e);
         }
-        return dir;
+        shareImage(imagePath);
     }
-    private void shareImage(File file){
+
+    private void shareImage(File file) {
         Uri uri = Uri.fromFile(file);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
