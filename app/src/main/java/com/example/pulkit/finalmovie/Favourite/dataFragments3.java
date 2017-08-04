@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.pulkit.finalmovie.Adapters.MovieAdapter;
 import com.example.pulkit.finalmovie.Database.FavoriteOpenHelper;
@@ -58,22 +59,17 @@ public class dataFragments3 extends Fragment {
                     }
                 })
         );
+        if (favoriteOpenHelper == null) {
+            Toast.makeText(getActivity(), "Favourite List Is Empty", Toast.LENGTH_SHORT).show();
+        }
+        else
         getAllFavorite();
         return rootView;
     }
-    private void getAllFavorite(){
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params){
-                mMovies.addAll(favoriteOpenHelper.getAllFavorite());
-                return null;
-            }
-            @Override
-            protected void onPostExecute(Void aVoid){
-                super.onPostExecute(aVoid);
-                movieAdapter.notifyDataSetChanged();
-            }
-        }.execute();
+    private void getAllFavorite() {
+        mMovies.clear();
+        mMovies.addAll(favoriteOpenHelper.getAllFavorite());
+        movieAdapter.notifyDataSetChanged();
     }
     }
 

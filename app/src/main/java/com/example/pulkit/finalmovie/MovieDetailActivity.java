@@ -76,14 +76,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
         titlename = (mMovie.getTitle() == null) ? mMovie.getName() : mMovie.getTitle();
         date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
 
@@ -93,9 +85,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.movie_title);
         description = (TextView) findViewById(R.id.movie_description);
         poster = (ImageView) findViewById(R.id.movie_poster);
-//        materialFavoriteButton = (MaterialFavoriteButton) findViewById(R.id.favourite_button);
-
-
         movie_id = mMovie.getId();
         title.setText(titlename);
         description.setText(mMovie.getDescription());
@@ -114,7 +103,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.creditRecyclerView);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mRecyclerView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this,3, GridLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
         Call<CreditResponse> call;
         if(istv==true) {
