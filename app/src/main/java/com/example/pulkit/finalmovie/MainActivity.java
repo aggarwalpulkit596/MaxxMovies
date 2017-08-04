@@ -5,6 +5,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +22,25 @@ import android.widget.AutoCompleteTextView;
 import com.example.pulkit.finalmovie.Adapters.SearchAdapter;
 import com.example.pulkit.finalmovie.Favourite.dataFragments3;
 import com.example.pulkit.finalmovie.Fragments.dataFragment;
+import com.example.pulkit.finalmovie.Model.MovieResponse;
+import com.example.pulkit.finalmovie.Model.Movies;
+import com.example.pulkit.finalmovie.Rest.ApiClients;
+import com.example.pulkit.finalmovie.Rest.ApiInterface;
 import com.example.pulkit.finalmovie.TvFragments.dataFragments2;
 
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
     AutoCompleteTextView autoCompleteTextView;
     SearchAdapter mAdapter;
+    private ArrayList<Movies> mMovieList;
+    private SearchAdapter searchAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +48,16 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mMovieList = new ArrayList<>();
+        searchAdapter = new SearchAdapter(MainActivity.this, mMovieList);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -72,7 +91,26 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-            return true;
+            autoCompleteTextView = item.getActionView().findViewById(R.id.autoCompleteTextView_searchWidget);
+            autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    Log.i("TAG", "afterTextChanged: "+editable.toString());
+                    fetchsearch(editable.toString());
+
+                }
+            });
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -106,4 +144,29 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+    public void fetchsearch(String s) {
+
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<MovieResponse> call = apiService.searchMovies(ConstantKey.MOVIEDB_API, s);
+        call.enqueue(new Callback<MovieResponse>() {
+
+            @Override
+            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                Log.d("TAG", response.code()+"");
+                if (response.isSuccessful()) {
+                    Log.i("TAG", "onResponse: Success");
+                    mMovieList.clear();
+                    mMovieList.addAll(response.body().getResults());
+                    Log.i("TAG", "onResponse: With Size "+mMovieList.size()+" "+mMovieList.get(0).getTitle());
+                    autoCompleteTextView.setAdapter(searchAdapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
 }
