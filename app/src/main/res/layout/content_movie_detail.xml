@@ -72,7 +72,6 @@
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
-        <!--<com.github.ivbaranov.mfb.MaterialFavoriteButton--><!--android:id="@+id/favourite_button"--><!--android:layout_width="100dp"--><!--android:layout_height="100dp"--><!--android:background="@color/colorPrimary" />-->
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

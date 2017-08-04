@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 
 import com.example.pulkit.finalmovie.Adapters.SearchAdapter;
+import com.example.pulkit.finalmovie.Favourite.dataFragments3;
 import com.example.pulkit.finalmovie.Fragments.dataFragment;
 import com.example.pulkit.finalmovie.TvFragments.dataFragments2;
 
@@ -33,14 +34,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -96,12 +89,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_TV) {
             setFragment(new dataFragments2());
 
-        } else if (id == R.id.nav_people) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_Favorite) {
+            setFragment(new dataFragments3());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

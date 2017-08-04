@@ -54,6 +54,9 @@ public class Movies implements Serializable {
         this.voteAverage = voteAverage;
         this.name = name;
     }
+    public Movies(){
+
+    }
 
 
 

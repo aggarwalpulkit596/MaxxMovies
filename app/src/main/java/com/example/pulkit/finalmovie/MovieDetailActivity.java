@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.pulkit.finalmovie.Adapters.CreditAdapter;
 import com.example.pulkit.finalmovie.Adapters.TrailersAdapter;
+import com.example.pulkit.finalmovie.Database.FavoriteOpenHelper;
 import com.example.pulkit.finalmovie.Model.Credit;
 import com.example.pulkit.finalmovie.Model.CreditResponse;
 import com.example.pulkit.finalmovie.Model.Movies;
@@ -50,12 +51,10 @@ public class MovieDetailActivity extends AppCompatActivity {
     TextView title;
     TextView description;
     RecyclerView mRecyclerView, nRecyclerView;
-    CreditAdapter cadapter;
     List<Trailers> trailer;
     List<Credit> credit;
-
-
-    MaterialFavoriteButton materialFavoriteButton;
+    private Movies favorite;
+    private FavoriteOpenHelper favoriteOpenHelper;
     int movie_id;
     String titlename;
     String date;
@@ -178,5 +177,17 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private void saveFavorite(){
+        favoriteOpenHelper = new FavoriteOpenHelper(MovieDetailActivity.this);
+        favorite = new Movies();
+        favorite.setId(movie_id);
+        favorite.setTitle(titlename);
+        favorite.setPoster(mMovie.getPoster());
+
+        favorite.setVoteAverage(mMovie.getVoteAverage());
+        favorite.setDescription(mMovie.getDescription());
+
+        favoriteOpenHelper.addFavorite(favorite);
     }
 }
