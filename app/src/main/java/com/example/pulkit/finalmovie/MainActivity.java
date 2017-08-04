@@ -1,6 +1,12 @@
 package com.example.pulkit.finalmovie;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import com.example.pulkit.finalmovie.Adapters.SearchAdapter;
 import com.example.pulkit.finalmovie.Favourite.dataFragments3;
@@ -28,6 +35,8 @@ import com.example.pulkit.finalmovie.Rest.ApiClients;
 import com.example.pulkit.finalmovie.Rest.ApiInterface;
 import com.example.pulkit.finalmovie.TvFragments.dataFragments2;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -39,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     AutoCompleteTextView autoCompleteTextView;
     SearchAdapter mAdapter;
     private ArrayList<Movies> mMovieList;
+    Toolbar toolbar;
     private SearchAdapter searchAdapter;
 
 
@@ -46,8 +56,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+       setSupportActionBar(toolbar);
         mMovieList = new ArrayList<>();
         searchAdapter = new SearchAdapter(MainActivity.this, mMovieList);
 
@@ -120,6 +130,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         int id = item.getItemId();
 
         if (id == R.id.nav_Movies) {
@@ -129,9 +140,21 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_Favorite) {
             setFragment(new dataFragments3());
-        }
+        }else if (id == R.id.nav_share) {
+            drawer.closeDrawer(GravityCompat.START);
+            final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+            Runnable r = new Runnable() {
+                @Override
+                public void run(){
+                    Bitmap bm = getScreenShot(rootView);
+                    File a = store(bm,"ScreenShot"+System.currentTimeMillis());
+                    shareImage(a);                }
+            };
+            Handler h = new Handler();
+            h.postDelayed(r, 1000);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -158,7 +181,9 @@ public class MainActivity extends AppCompatActivity
                     mMovieList.clear();
                     mMovieList.addAll(response.body().getResults());
                     Log.i("TAG", "onResponse: With Size "+mMovieList.size()+" "+mMovieList.get(0).getTitle());
+                    searchAdapter = new SearchAdapter(MainActivity.this, mMovieList);
                     autoCompleteTextView.setAdapter(searchAdapter);
+//                    toolbar.setCustomView()
                 }
             }
 
@@ -168,5 +193,45 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+    public static Bitmap getScreenShot(View view){
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+        screenView.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    public static File store(Bitmap bm, String fileName){
+        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
+        File dir = new File(dirPath);
+        if(!dir.exists())
+            dir.mkdirs();
+        File file = new File(dirPath, fileName);
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dir;
+    }
+    private void shareImage(File file){
+        Uri uri = Uri.fromFile(file);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("image/*");
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        try {
+            startActivity(Intent.createChooser(intent, "Share Screenshot"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(MainActivity.this, "No App Available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }
