@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.pulkit.finalmovie.Adapters.MovieAdapter;
 import com.example.pulkit.finalmovie.ConstantKey;
@@ -33,6 +35,11 @@ import retrofit2.Response;
 public class TvTopRatedFragment extends Fragment {
     RecyclerView mRecyclerView;
     ArrayList<Movies> mMovies;
+    MovieAdapter mAdapter;
+    LinearLayoutManager layoutManager;
+    boolean loadingMore = false;
+    static int i = 2;
+    private int lastVisibleItemId;
 
 
     @Nullable
@@ -40,15 +47,34 @@ public class TvTopRatedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.content, container, false);
         mRecyclerView = rootView.findViewById(R.id.videoRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayout.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        fetchdata(1, 0);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                lastVisibleItemId = layoutManager.findLastVisibleItemPosition();
+
+                if (lastVisibleItemId == mMovies.size() - 1 && !loadingMore)
+                    loadMoreData(i++);
+            }
+        });
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(getContext(),MovieDetailActivity.class);
+                        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
                         intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, mMovies.get(position));
-                        intent.putExtra("istv",true);
+                        intent.putExtra("istv", false);
                         startActivity(intent);
                     }
 
@@ -58,15 +84,37 @@ public class TvTopRatedFragment extends Fragment {
                     }
                 })
         );
+
+
+        return rootView;
+    }
+
+    private void loadMoreData(int i) {
+        loadingMore = true;
+        fetchdata(i, lastVisibleItemId);
+    }
+
+    private void fetchdata(int page, final int last) {
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<MovieResponse> call = apiService.getTopRatedSeries(ConstantKey.MOVIEDB_API,1);
+        Call<MovieResponse> call = apiService.getTopRatedSeries(ConstantKey.MOVIEDB_API, page);
         call.enqueue(new Callback<MovieResponse>() {
 
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                 int statusCode = response.code();
-                mMovies = response.body().getResults();
-                mRecyclerView.setAdapter(new MovieAdapter(mMovies, getContext()));
+                Log.i("ResponseCode", "onResponse: " + statusCode);
+                if (response.isSuccessful()) {
+                    ArrayList<Movies> nMovies;
+                    nMovies = response.body().getResults();
+                    if (loadingMore) {
+                        mMovies.addAll(nMovies);
+                        mRecyclerView.scrollToPosition(last);
+                    } else
+                        mMovies = nMovies;
+                    mRecyclerView.setAdapter(mAdapter = new MovieAdapter(mMovies, getContext()));
+                    mAdapter.notifyDataSetChanged();
+                    loadingMore = false;
+                }
 
             }
 
@@ -75,6 +123,7 @@ public class TvTopRatedFragment extends Fragment {
 
             }
         });
-        return rootView;
     }
+
 }
+
