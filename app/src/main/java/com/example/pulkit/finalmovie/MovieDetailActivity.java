@@ -273,7 +273,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private void saveFavorite() {
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<PostResponse> call = apiService.markFav(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), "movie", movie_id, true);
+        Call<PostResponse> call = apiService.markFav(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), istv ? "tv" : "movie", movie_id, true);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -288,19 +288,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             }
         });
-//        Movies favorite = new Movies();
-//        favorite.setId(movie_id);
-//        favorite.setTitle(titlename);
-//        favorite.setPoster(mMovie.getPoster());
-//
-//        favorite.setVoteAverage(mMovie.getVoteAverage());
-//        favorite.setDescription(mMovie.getDescription());
-//        favoriteOpenHelper.addFavorite(favorite);
 
     }
+
     private void saveWishlist() {
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<PostResponse> call = apiService.markWish(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), "movie", movie_id, true);
+        Call<PostResponse> call = apiService.markWish(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), istv ? "tv" : "movie", movie_id, true);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
