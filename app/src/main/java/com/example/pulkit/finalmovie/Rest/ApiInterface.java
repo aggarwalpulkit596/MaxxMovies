@@ -21,25 +21,25 @@ import retrofit2.http.Query;
 
 public interface ApiInterface {
     @GET("movie/top_rated")
-    Call<MovieResponse> getTopRatedMovies(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getTopRatedMovies(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("movie/upcoming")
-    Call<MovieResponse> getUpcomingMovies(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getUpcomingMovies(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("movie/now_playing")
-    Call<MovieResponse> getNowPlayingMovies(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getNowPlayingMovies(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("movie/popular")
-    Call<MovieResponse> getPopularovies(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getPopularovies(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("tv/popular")
-    Call<MovieResponse> getPopularSeries(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getPopularSeries(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("tv/top_rated")
-    Call<MovieResponse> getTopRatedSeries(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getTopRatedSeries(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("tv/on_the_air")
-    Call<MovieResponse> getOnTheAirSeries(@Query("api_key") String apikey,@Query("page") int pageIndex);
+    Call<MovieResponse> getOnTheAirSeries(@Query("api_key") String apikey, @Query("page") int pageIndex);
 
     @GET("movie/{movie_id}/videos")
     Call<TrailerResponse> getMovieTrailer(@Path("movie_id") int id, @Query("api_key") String apiKey);
@@ -54,7 +54,7 @@ public interface ApiInterface {
     Call<CreditResponse> getSeriesCredits(@Path("tv_id") int id, @Query("api_key") String apikey);
 
     @GET("search/movie")
-    Call<MovieResponse> searchMovies(@Query("api_key") String apikey,@Query("query") String search);
+    Call<MovieResponse> searchMovies(@Query("api_key") String apikey, @Query("query") String search);
 
     @GET("movie/{movie_id}/recommendations")
     Call<MovieResponse> getMovieRecommendations(@Path("movie_id") int id, @Query("api_key") String apiKey);
@@ -69,12 +69,11 @@ public interface ApiInterface {
     Call<LoginResponse> getSessionId(@Query("api_key") String apiKey, @Query("request_token") String token);
 
     @GET("authentication/token/validate_with_login")
-    Call<LoginResponse> getLogin(@Query("api_key") String apiKey,@Query("username") String username,@Query("password") String password,@Query("request_token") String token);
+    Call<LoginResponse> getLogin(@Query("api_key") String apiKey, @Query("username") String username, @Query("password") String password, @Query("request_token") String token);
 
     @POST("account/{account_id}/favorite")
     @FormUrlEncoded
-
-    Call<PostResponse> markFav(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username, @Field("media_type") String type,@Field("media_id") int mediaid,@Field("favorite") boolean add);
+    Call<PostResponse> markFav(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Field("media_type") String type, @Field("media_id") int mediaid, @Field("favorite") boolean add);
 
     @POST("account/{account_id}/watchlist")
     @FormUrlEncoded
@@ -83,16 +82,11 @@ public interface ApiInterface {
     @GET("account")
     Call<AccountResponse> getDetail(@Query("api_key") String apiKey, @Query("session_id") String username);
 
+    @GET("account/{account_id}/watchlist/movies")
+    Call<MovieResponse> getMovieWish(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Query("page") int pageIndex);
 
-
-
-
-
-
-
-
-
-
+    @GET("account/{account_id}/watchlist/tv")
+    Call<MovieResponse> getTvWish(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Query("page") int pageIndex);
 
 
 }

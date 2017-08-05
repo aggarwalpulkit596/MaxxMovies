@@ -1,25 +1,21 @@
 package com.example.pulkit.finalmovie.Favourite;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.pulkit.finalmovie.Adapters.MovieAdapter;
-import com.example.pulkit.finalmovie.Database.FavoriteOpenHelper;
-import com.example.pulkit.finalmovie.Model.Movies;
-import com.example.pulkit.finalmovie.MovieDetailActivity;
+import com.example.pulkit.finalmovie.Fragments.PopularFragment;
+import com.example.pulkit.finalmovie.Fragments.nowPlayingFragment;
+import com.example.pulkit.finalmovie.Fragments.topRatedFragment;
+import com.example.pulkit.finalmovie.Fragments.upcomingFragment;
 import com.example.pulkit.finalmovie.R;
-import com.example.pulkit.finalmovie.TvFragments.RecyclerItemClickListener;
-import java.util.ArrayList;
 
 
 /**
@@ -27,49 +23,56 @@ import java.util.ArrayList;
  */
 
 public class dataFragments3 extends Fragment {
-    RecyclerView mRecyclerView;
-    MovieAdapter movieAdapter;
-    ArrayList<Movies> mMovies;
-    private FavoriteOpenHelper favoriteOpenHelper;
+    View view;
+    ViewPager viewPager;
+    TabLayout tabLayout;
 
-
-
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.content, container, false);
-        mRecyclerView = rootView.findViewById(R.id.videoRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        movieAdapter = new MovieAdapter(mMovies,getActivity());
-        mRecyclerView.setAdapter(movieAdapter);
-        mRecyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-                        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, mMovies.get(position));
-                        intent.putExtra("istv", false);
-                        startActivity(intent);
-                    }
+        view = inflater.inflate(R.layout.sample, container, false);
 
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                })
-        );
-        if (favoriteOpenHelper == null) {
-            Toast.makeText(getActivity(), "Favourite List Is Empty", Toast.LENGTH_SHORT).show();
+        viewPager = view.findViewById(R.id.viewpager);
+        viewPager.setAdapter(new sliderAdapter(getChildFragmentManager()));
+        tabLayout = view.findViewById(R.id.sliding_tabs);
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                tabLayout.setupWithViewPager(viewPager);
+            }
+        });
+
+        return view;
+    }
+
+    private class sliderAdapter extends FragmentPagerAdapter {
+
+        final String tabs[] = {"Movies", "Tv Series"};
+
+        public sliderAdapter(FragmentManager fm) {
+            super(fm);
         }
-        else
-        getAllFavorite();
-        return rootView;
-    }
-    private void getAllFavorite() {
-        mMovies.clear();
-        mMovies.addAll(favoriteOpenHelper.getAllFavorite());
-        movieAdapter.notifyDataSetChanged();
-    }
-    }
 
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new movieFragment();
+
+                case 1:
+                    return new tvFragment();
+            }
+
+            return new movieFragment();
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabs[position];
+        }
+    }
+}
