@@ -1,7 +1,6 @@
 package com.example.pulkit.finalmovie;
 
 
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,10 +27,12 @@ import com.example.pulkit.finalmovie.Adapters.CreditAdapter;
 import com.example.pulkit.finalmovie.Adapters.MovieAdapter;
 import com.example.pulkit.finalmovie.Adapters.TrailersAdapter;
 import com.example.pulkit.finalmovie.Database.FavoriteOpenHelper;
+import com.example.pulkit.finalmovie.Model.AccountResponse;
 import com.example.pulkit.finalmovie.Model.Credit;
 import com.example.pulkit.finalmovie.Model.CreditResponse;
 import com.example.pulkit.finalmovie.Model.MovieResponse;
 import com.example.pulkit.finalmovie.Model.Movies;
+import com.example.pulkit.finalmovie.Model.PostResponse;
 import com.example.pulkit.finalmovie.Model.TrailerResponse;
 import com.example.pulkit.finalmovie.Model.Trailers;
 import com.example.pulkit.finalmovie.Rest.ApiClients;
@@ -267,15 +268,31 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void saveFavorite() {
-        Movies favorite = new Movies();
-        favorite.setId(movie_id);
-        favorite.setTitle(titlename);
-        favorite.setPoster(mMovie.getPoster());
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<PostResponse> call = apiService.markWish(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), "movie", movie_id, true);
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if (response.isSuccessful()) {
 
-        favorite.setVoteAverage(mMovie.getVoteAverage());
-        favorite.setDescription(mMovie.getDescription());
+                    Log.i("Now in Fetching", "run: " + response);
+                }
+            }
 
-        favoriteOpenHelper.addFavorite(favorite);
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+
+            }
+        });
+//        Movies favorite = new Movies();
+//        favorite.setId(movie_id);
+//        favorite.setTitle(titlename);
+//        favorite.setPoster(mMovie.getPoster());
+//
+//        favorite.setVoteAverage(mMovie.getVoteAverage());
+//        favorite.setDescription(mMovie.getDescription());
+//        favoriteOpenHelper.addFavorite(favorite);
+
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
