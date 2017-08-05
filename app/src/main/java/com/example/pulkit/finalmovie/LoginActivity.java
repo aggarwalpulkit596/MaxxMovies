@@ -80,6 +80,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
+        if(ConstantKey.getSESSION()!=null){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -381,7 +384,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         onPostExecute(false);
                     }
                 });
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (
                     InterruptedException e)
 
