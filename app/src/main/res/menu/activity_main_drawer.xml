@@ -13,6 +13,10 @@
         <item
             android:id="@+id/nav_Favorite"
             android:icon="@drawable/ic_menu_slideshow"
+            android:title="Wishlist" />
+        <item
+            android:id="@+id/nav_Wishlist"
+            android:icon="@drawable/ic_menu_slideshow"
             android:title="Favorites" />
     </group>
     <item android:title="Communicate">

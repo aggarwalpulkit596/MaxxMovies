@@ -88,5 +88,11 @@ public interface ApiInterface {
     @GET("account/{account_id}/watchlist/tv")
     Call<MovieResponse> getTvWish(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Query("page") int pageIndex);
 
+    @GET("account/{account_id}/favorite/movies")
+    Call<MovieResponse> getMovieFav(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Query("page") int pageIndex);
+
+    @GET("account/{account_id}/favorite/tv")
+    Call<MovieResponse> getTvFav(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Query("page") int pageIndex);
+
 
 }

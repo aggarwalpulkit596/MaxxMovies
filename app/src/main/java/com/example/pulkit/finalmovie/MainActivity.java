@@ -35,6 +35,7 @@ import com.example.pulkit.finalmovie.Model.Movies;
 import com.example.pulkit.finalmovie.Rest.ApiClients;
 import com.example.pulkit.finalmovie.Rest.ApiInterface;
 import com.example.pulkit.finalmovie.TvFragments.dataFragments2;
+import com.example.pulkit.finalmovie.Wishlist.dataFragments4;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -172,6 +173,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_Favorite) {
             setFragment(new dataFragments3());
+        } else if (id == R.id.nav_Wishlist) {
+            setFragment(new dataFragments4());
         } else if (id == R.id.nav_share) {
             drawer.closeDrawer(GravityCompat.START);
             Toast.makeText(MainActivity.this, "Screenshot Saved", Toast.LENGTH_SHORT).show();
