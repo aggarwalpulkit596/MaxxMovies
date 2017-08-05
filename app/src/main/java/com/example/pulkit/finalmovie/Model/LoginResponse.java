@@ -14,6 +14,18 @@ public class LoginResponse {
     @SerializedName("request_token")
     private String token;
 
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
+    }
+
+    @SerializedName("session_id")
+    private String session;
+
+
     public LoginResponse() {
     }
 

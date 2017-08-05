@@ -12,7 +12,23 @@ public class ConstantKey {
     public static String YOUTUBE_API = "AIzaSyDeJ4_bztNQv7xDZUeehvC0ZsHf9fjy79o";
     public static String MOVIEDB_API = "a908fc789577ee9ead5deab36bcfbc1b";
     public static String TOKEN;
+    public static String SESSION;
+    public static Integer ID;
 
+    public static String getSESSION() {
+        return SESSION;
+    }
+
+    public static void setSESSION(String SESSION) {
+        ConstantKey.SESSION = SESSION;
+    }
+
+    public static Integer getID() {
+        return ID;
+    }
+    public static void setID(Integer ID) {
+        ConstantKey.ID = ID;
+    }
     public static String getNAME() {
         return NAME;
     }

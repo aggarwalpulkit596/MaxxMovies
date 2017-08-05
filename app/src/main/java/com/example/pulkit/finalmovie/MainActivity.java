@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.example.pulkit.finalmovie.Adapters.SearchAdapter;
 import com.example.pulkit.finalmovie.Favourite.dataFragments3;
 import com.example.pulkit.finalmovie.Fragments.dataFragment;
+import com.example.pulkit.finalmovie.Model.AccountResponse;
 import com.example.pulkit.finalmovie.Model.MovieResponse;
 import com.example.pulkit.finalmovie.Model.Movies;
 import com.example.pulkit.finalmovie.Rest.ApiClients;
@@ -72,8 +73,38 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                fetchDetails();
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 1000);
         setFragment(new dataFragment());//init
 
+    }
+
+    private void fetchDetails() {
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<AccountResponse> call = apiService.getDetail(ConstantKey.MOVIEDB_API, ConstantKey.getSESSION());
+        call.enqueue(new Callback<AccountResponse>() {
+            @Override
+            public void onResponse(Call<AccountResponse> call, Response<AccountResponse> response) {
+                Log.i("Now in Fetching", "run: " + response);
+                if (response.isSuccessful()) {
+                    Log.i("Now in Fetching", "run: " + response+response.body().getId());
+                    ConstantKey.setID(response.body().getId());
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<AccountResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

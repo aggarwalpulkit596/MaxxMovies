@@ -321,7 +321,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
 
             try {
-                ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+                final ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
                 Call<LoginResponse> call = apiService.getRequestToken(ConstantKey.MOVIEDB_API);
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override
@@ -333,21 +333,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     }
 
-                    private void login(final String Email, String Password, String t) {
-                        Log.i("LoginSuccessful", "onResponse: " + t + Email + Password);
-                        ApiInterface apiService2 = ApiClients.getClient().create(ApiInterface.class);
-                        Log.i("LoginSuccessful", "onResponse: " + t + Email + Password);
+                    private void login(final String Email, String Password, final String t) {
+                        final ApiInterface apiService2 = ApiClients.getClient().create(ApiInterface.class);
                         Call<LoginResponse> call2 = apiService2.getLogin(ConstantKey.MOVIEDB_API, Email, Password, t);
                         Log.i("LoginSuccessful", "onResponse: " + t + Email + Password);
                         call2.enqueue(new Callback<LoginResponse>() {
                             @Override
                             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                                 if (response.isSuccessful()) {
-                                    Log.i("LoginSuccessful2", "onResponse: " + response);
-                                    LoginResponse loginResponse2 = new LoginResponse();
-                                    String token = loginResponse2.getToken();
-                                    Log.i("LoginSuccessful2token", "onResponse: " + token);
-                                    ConstantKey.setTOKEN(token);
+                                    ApiInterface apiService3 = ApiClients.getClient().create(ApiInterface.class);
+                                    Call<LoginResponse> call3 = apiService3.getSessionId(ConstantKey.MOVIEDB_API, t);
+                                    call3.enqueue(new Callback<LoginResponse>() {
+                                        @Override
+                                        public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                                            if (response.isSuccessful()) {
+                                                ConstantKey.setSESSION(response.body().getSession());
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+                                        }
+                                    });
                                     ConstantKey.setNAME(Email);
                                     islogin = true;
 
@@ -372,7 +381,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         onPostExecute(false);
                     }
                 });
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (
                     InterruptedException e)
 

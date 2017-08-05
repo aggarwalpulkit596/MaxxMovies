@@ -1,11 +1,14 @@
 package com.example.pulkit.finalmovie.Rest;
 
+import com.example.pulkit.finalmovie.Model.AccountResponse;
 import com.example.pulkit.finalmovie.Model.CreditResponse;
 import com.example.pulkit.finalmovie.Model.LoginResponse;
 import com.example.pulkit.finalmovie.Model.MovieResponse;
+import com.example.pulkit.finalmovie.Model.PostResponse;
 import com.example.pulkit.finalmovie.Model.TrailerResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -68,10 +71,14 @@ public interface ApiInterface {
     Call<LoginResponse> getLogin(@Query("api_key") String apiKey,@Query("username") String username,@Query("password") String password,@Query("request_token") String token);
 
     @POST("account/{account_id}/favorite")
-    Call<MovieResponse> markFav(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username);
+    Call<PostResponse> markFav(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username, @Field("media_type") String type,@Field("media_id") int mediaid,@Field("watchlist") boolean add);
 
     @POST("account/{account_id}/watchlist")
-    Call<MovieResponse> markWish(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username);
+    Call<PostResponse> markWish(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Field("media_type") String type, @Field("media_id") int mediaid, @Field("watchlist") boolean add);
+
+    @GET("account")
+    Call<AccountResponse> getDetail(@Query("api_key") String apiKey, @Query("session_id") String username);
+
 
 
 
