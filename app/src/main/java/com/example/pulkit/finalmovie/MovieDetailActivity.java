@@ -277,9 +277,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                Log.i("NowFetchingFavorite", "run: " + response);
                 if (response.isSuccessful()) {
 
-                    Log.i("Now in Fetching", "run: " + response);
+                    Log.i("NowFetchingFavorite", "run: " + response);
                 }
             }
 
@@ -299,7 +300,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
                 if (response.isSuccessful()) {
 
-                    Log.i("Now in Fetching", "run: " + response);
+                    Log.i("NowFetchingWishlist", "run: " + response);
                 }
             }
 
@@ -324,11 +325,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.fab3:
-                    if (fab2.getLabelText().equals("Add to Watchlist")) {
-                        fab2.setLabelText("Remove From Wacthlist");
+                    if (fab3.getLabelText().equals("Add to Watchlist")) {
+                        fab3.setLabelText("Remove From Wacthlist");
                         saveWishlist();
                     } else {
-                        fab2.setLabelText("Add to Watchlist");
+                        fab3.setLabelText("Add to Watchlist");
 //                        favoriteOpenHelper.deleteFavorite();
                     }
                     break;

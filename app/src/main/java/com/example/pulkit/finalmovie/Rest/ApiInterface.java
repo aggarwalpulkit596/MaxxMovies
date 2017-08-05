@@ -72,7 +72,9 @@ public interface ApiInterface {
     Call<LoginResponse> getLogin(@Query("api_key") String apiKey,@Query("username") String username,@Query("password") String password,@Query("request_token") String token);
 
     @POST("account/{account_id}/favorite")
-    Call<PostResponse> markFav(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username, @Field("media_type") String type,@Field("media_id") int mediaid,@Field("watchlist") boolean add);
+    @FormUrlEncoded
+
+    Call<PostResponse> markFav(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username, @Field("media_type") String type,@Field("media_id") int mediaid,@Field("favorite") boolean add);
 
     @POST("account/{account_id}/watchlist")
     @FormUrlEncoded
