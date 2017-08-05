@@ -69,6 +69,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     boolean istv;
     private FloatingActionMenu menuRed;
     private com.github.clans.fab.FloatingActionButton fab2;
+    private com.github.clans.fab.FloatingActionButton fab3;
     private List<FloatingActionMenu> menus = new ArrayList<>();
     FavoriteOpenHelper favoriteOpenHelper = new FavoriteOpenHelper(MovieDetailActivity.this);
     List<Integer> genreIds = new ArrayList<>();
@@ -117,6 +118,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         menuRed = (FloatingActionMenu) findViewById(R.id.fab);
         fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
         com.github.clans.fab.FloatingActionButton fab1 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab1);
+        fab3 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab3);
+
         setSupportActionBar(toolbar);
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         menuRed.setClosedOnTouchOutside(true);
@@ -129,6 +132,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
         fab1.setOnClickListener(clickListener);
         fab2.setOnClickListener(clickListener);
+        fab3.setOnClickListener(clickListener);
         genreIds.addAll(mMovie.getGenreIds());
         titlename = (mMovie.getTitle() == null) ? mMovie.getName() : mMovie.getTitle();
         date = (mMovie.getReleaseDate() == null) ? mMovie.getFirstairdate() : mMovie.getReleaseDate();
@@ -269,7 +273,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private void saveFavorite() {
         ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
-        Call<PostResponse> call = apiService.markWish(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), "movie", movie_id, true);
+        Call<PostResponse> call = apiService.markFav(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), "movie", movie_id, true);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -294,6 +298,24 @@ public class MovieDetailActivity extends AppCompatActivity {
 //        favoriteOpenHelper.addFavorite(favorite);
 
     }
+    private void saveWishlist() {
+        ApiInterface apiService = ApiClients.getClient().create(ApiInterface.class);
+        Call<PostResponse> call = apiService.markWish(ConstantKey.getID(), ConstantKey.MOVIEDB_API, ConstantKey.getSESSION(), "movie", movie_id, true);
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if (response.isSuccessful()) {
+
+                    Log.i("Now in Fetching", "run: " + response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+
+            }
+        });
+    }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
@@ -305,6 +327,15 @@ public class MovieDetailActivity extends AppCompatActivity {
                         saveFavorite();
                     } else {
                         fab2.setLabelText("Add to Favorites");
+//                        favoriteOpenHelper.deleteFavorite();
+                    }
+                    break;
+                case R.id.fab3:
+                    if (fab2.getLabelText().equals("Add to Watchlist")) {
+                        fab2.setLabelText("Remove From Wacthlist");
+                        saveWishlist();
+                    } else {
+                        fab2.setLabelText("Add to Watchlist");
 //                        favoriteOpenHelper.deleteFavorite();
                     }
                     break;

@@ -9,6 +9,7 @@ import com.example.pulkit.finalmovie.Model.TrailerResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -74,6 +75,7 @@ public interface ApiInterface {
     Call<PostResponse> markFav(@Path("account_id") int id,@Query("api_key") String apiKey,@Query("session_id") String username, @Field("media_type") String type,@Field("media_id") int mediaid,@Field("watchlist") boolean add);
 
     @POST("account/{account_id}/watchlist")
+    @FormUrlEncoded
     Call<PostResponse> markWish(@Path("account_id") int id, @Query("api_key") String apiKey, @Query("session_id") String username, @Field("media_type") String type, @Field("media_id") int mediaid, @Field("watchlist") boolean add);
 
     @GET("account")
